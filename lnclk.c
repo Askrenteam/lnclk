@@ -40,12 +40,15 @@ int main () {
     xcb_init();
 
     parse_config_file();
+
     time_t timestamp;
     struct tm *timeinfo;
     time (&timestamp);
     timeinfo = localtime(&timestamp);
+
     xcb_point_t fg_points[] = {{0,0},{0,0}};
     xcb_point_t bg_points[] = {{0,0},{(int16_t)xcb->screen->width_in_pixels,0}};
+
     xcb_ewmh_connection_t ewmh = {
         .connection = xcb->connection,
         .screens = &xcb->screen,
@@ -69,8 +72,8 @@ int main () {
     while (loop) {
         time(&timestamp);
         timeinfo = localtime(&timestamp);
-        fg_points[1].x = (int)(((double)timeinfo->tm_sec/60)*xcb->screen->width_in_pixels);
-        bg_points[0].x = (int)(((double)timeinfo->tm_sec/60)*xcb->screen->width_in_pixels);
+        fg_points[1].x = get_x_progress(timeinfo);
+        bg_points[0].x = get_x_progress(timeinfo);
         xcb_poly_line (xcb->connection, XCB_COORD_MODE_ORIGIN, xcb->window, xcb->foreground, 2, fg_points);
         xcb_poly_line (xcb->connection, XCB_COORD_MODE_ORIGIN, xcb->window, xcb->background, 2, bg_points);
         xcb_flush(xcb->connection);
@@ -202,4 +205,20 @@ void set_context_color (xcb_gcontext_t gcontext, color col) {
                       XCB_GC_FOREGROUND,
                       &reply->pixel);
     }
+}
+
+int get_x_progress (struct tm *timeinfo) {
+    int x = 0;
+    switch (config.unit) {
+        case SEC:
+            x = (int)(((double)timeinfo->tm_sec/60)*xcb->screen->width_in_pixels);
+            break;
+        case MIN:
+            x = (int)(((double)timeinfo->tm_min/60)*xcb->screen->width_in_pixels);
+            break;
+        case HOUR:
+            x = (int)(((double)timeinfo->tm_hour/24)*xcb->screen->width_in_pixels);
+            break;
+    }
+    return x;
 }

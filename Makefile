@@ -1,7 +1,13 @@
 default: all
 
-all: lnclk.c
-	gcc lnclk.c -lxcb -lxcb-ewmh -o lnclk
+all: lnclk config 
+	gcc *.o -lxcb -lxcb-ewmh -o lnclk
 
-clean:
-	rm lnclk
+lnclk: lnclk.c
+	gcc -c lnclk.c -lxcb -lxcb-ewmh -o lnclk.o
+
+config: config.c
+	gcc -c config.c -lxcb -lxcb-ewmh -o config.o
+
+clean: 
+	rm *.o

@@ -46,3 +46,6 @@ void xcb_init ( );
 
 //Set the foreground color of a context
 void set_context_color (xcb_gcontext_t gcontext,color col);
+
+//Get the x for a given time
+int get_x_progress (struct tm *timeinfo);

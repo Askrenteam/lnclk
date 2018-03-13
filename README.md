@@ -1,6 +1,6 @@
 # lnclk
 `lnclk` (pronounced lineclock) is a minimalist clock displaying time as a progress bar of 1 pixel of height.
-Currently, it displays seconds but it will be configurable.
+It should display as a dock in the top of the screen in most EWMH-compliant Window Managers.
 
 # Installation
 Clone the repository : 
@@ -10,10 +10,13 @@ Build the files :
 `make`
 
 # Configuration
-You can configure the background and foreground colors of the bar in `~/.config/lnclk/config`.
+The configuration file is located at `~/.config/lnclk/config`.
+You can configure the background(`bg`) and foreground(`fg`) colors of the bar (`#rrggbb` values).
+You can also configure the time unit (`tu`) displayed (seconds, minutes, hours). Default is seconds.
 Example configuration file : 
 ```
 fg = #906010
 bg = #101010
+tu = minutes
 ```
-_*Note :* spaces count around the '='. This is a known limitation I'll be working on._
+_*Note :* spaces count around the '='. This is a known limitation I'm working on._
