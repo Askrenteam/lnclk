@@ -184,7 +184,7 @@ void xcb_init () {
             xcb->window,                        /* window Id           */
             xcb->screen->root,                  /* parent window       */
             0, 0,                          /* x, y                */
-            150, 1,                      /* width, height       */
+            xcb->screen->width_in_pixels, 1,                      /* width, height       */
             0,                            /* border_width        */
             XCB_WINDOW_CLASS_INPUT_OUTPUT, /* class               */
             xcb->screen->root_visual,           /* visual              */
