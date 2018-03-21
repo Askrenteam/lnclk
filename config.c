@@ -36,22 +36,29 @@ void parse_config_file () {
         file = fopen(config_path, "r");
     }
     if (file) {
-        char c[3];
-        char d[8];
-        while (fscanf(file,"%s = %s",c, d) > 0) {
-            if(strcmp(c, "fg") == 0) {
-               config.foreground = hex_to_color (d); 
-            } else if (strcmp(c, "bg") == 0) {
-               config.background = hex_to_color (d); 
-            } else if (strcmp(c, "tu") == 0) {
-                if (strcmp(d, "seconds") == 0) {
-                    config.unit = SEC;
-                } else if (strcmp(d, "minutes") == 0) {
-                    config.unit = MIN;
-                } else if (strcmp(d, "hours") == 0) {
-                    config.unit = HOUR;
-                }
-            }
+        char *line;
+        size_t len = 0;
+        while(getline(&line,&len,file) != -1){
+           line = strip_whitespaces(line);
+           if(strlen(line)>1 && line[0]!='#'){
+               char *key = strtok(line,"=");
+               char *val = strtok(NULL,"=");
+               if(strcmp(key, "fg") == 0) {
+                   config.foreground = hex_to_color (val); 
+               } else if (strcmp(key, "bg") == 0) {
+                   config.background = hex_to_color (val); 
+               } else if (strcmp(key, "tu") == 0) {
+                   if (strcmp(val, "seconds") == 0) {
+                       config.unit = SEC;
+                   } else if (strcmp(val, "minutes") == 0) {
+                       config.unit = MIN;
+                   } else if (strcmp(val, "hours") == 0) {
+                       config.unit = HOUR;
+                   }
+               } else {
+                    printf("Unknown key : %s\n",key);
+               }
+           }
         }
     } else {
         printf("No config file found.\n");
@@ -74,3 +81,15 @@ color hex_to_color (char *hex) {
     return col;
 }
 
+char* strip_whitespaces(char *in) {
+    char *res = strdup(in);
+    int j=0;
+    for( unsigned int i=0 ; i<strlen(in) ; i++){
+        if(in[i]!=' ' && in[i]!='\t' && in[i]!='\n') {
+           res[j] = in[i]; 
+           j++;
+        }
+    }
+    res[j]='\0';
+    return res;
+}

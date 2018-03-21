@@ -15,10 +15,13 @@ Build the files :
 The configuration file is located at `~/.config/lnclk/config`.
 You can configure the background(`bg`) and foreground(`fg`) colors of the bar (`#rrggbb` values).
 You can also configure the time unit (`tu`) displayed (seconds, minutes, hours). Default is seconds.
+Lines that start with a '#' are comments.
 Example configuration file : 
 ```
+# Foreground color
 fg = #906010
+# Background color
 bg = #101010
+# Time unit
 tu = minutes
 ```
-_**Note :** spaces count around the '='. This is a known limitation I'm working on._

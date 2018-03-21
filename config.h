@@ -48,6 +48,10 @@ void parse_config_file ();
 //Convert a #rrggbb color to a color struct with 16-bit channels
 color hex_to_color (char *hex);
 
+//Strip spaces, tabs, and newlines from a string
+char* strip_whitespaces(char *in);
+
+
 
 //TODO : better syntax for config file (maybe getline instead of scanf)
 //TODO : continuous progression
