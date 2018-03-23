@@ -25,3 +25,6 @@ bg = #101010
 # Time unit
 tu = minutes
 ```
+
+
+You can have multiple instances of `lnclk` displaying hours, minutes, etc by loading alternate config files with the `-c` flag.

@@ -19,22 +19,25 @@
  *
 */
 #include "config.h"
+#include "unistd.h"
 
 configuration config = {
     .foreground = {65000,65000,65000},
     .background = {0,0,0},
-    .unit  = SEC
+    .unit  = SEC,
+    .config_file = NULL
 };
 
 void parse_config_file () {
-    char *home = getenv("HOME");
-    const char *file_path = "/.config/lnclk/config";
-    char *config_path;
     FILE *file = NULL;
-    if(home){
-        config_path = strcat(home,file_path);
-        file = fopen(config_path, "r");
+    if(!config.config_file) {
+        char *home = getenv("HOME");
+        const char *file_path = "/.config/lnclk/config";
+        if(home){
+            config.config_file = strcat(home,file_path);
+        }
     }
+    file = fopen(config.config_file, "r");
     if (file) {
         char *line;
         size_t len = 0;
@@ -92,4 +95,19 @@ char* strip_whitespaces(char *in) {
     }
     res[j]='\0';
     return res;
+}
+
+void get_opts (int argc, char **argv) {
+    int opt;
+    while((opt = getopt(argc,argv, "c:h")) != -1) {
+        switch(opt) {
+            case 'c':
+                config.config_file = optarg;
+                break;
+            case 'h':
+                printf("lnclk\n\nOptions : \n  -c [path]\tload alternate config file (default is at ~/.config/lnclk/config)\n  -h\t\tdisplay this help\n\nMore info at <https://github.com/Askrenteam/lnclk>\n");
+                exit(0);
+                break;
+        }
+    }
 }

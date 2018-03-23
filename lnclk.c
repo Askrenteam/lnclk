@@ -36,15 +36,15 @@ xcb_info xcb_empty = {
 };
 xcb_info *xcb = &xcb_empty;
 
-int main () {
+int main (int argc, char **argv) {
     xcb_init();
-
+    get_opts(argc, argv);
     parse_config_file();
 
     time_t timestamp;
     struct tm *timeinfo;
-    time (&timestamp);
-    timeinfo = localtime(&timestamp);
+    /* time (&timestamp); */
+    /* timeinfo = localtime(&timestamp); */
 
     xcb_point_t fg_points[] = {{0,0},{0,0}};
     xcb_point_t bg_points[] = {{0,0},{(int16_t)xcb->screen->width_in_pixels,0}};
@@ -67,7 +67,6 @@ int main () {
 
     xcb_flush (xcb->connection);
 
-    xcb_generic_event_t *event;
     int loop=1;
     while (loop) {
         time(&timestamp);
@@ -78,25 +77,6 @@ int main () {
         xcb_poly_line (xcb->connection, XCB_COORD_MODE_ORIGIN, xcb->window, xcb->background, 2, bg_points);
         xcb_flush(xcb->connection);
         sleep(1);
-        event = xcb_poll_for_event (xcb->connection);
-        if(event) {
-            switch (event->response_type & ~0x80) {
-                case XCB_EXPOSE:
-                    /* We draw the polygonal line */
-                    xcb_poly_line (xcb->connection, XCB_COORD_MODE_ORIGIN, xcb->window, xcb->foreground, 2, fg_points);
-                    xcb_poly_line (xcb->connection, XCB_COORD_MODE_ORIGIN, xcb->window, xcb->background, 2, bg_points);
-                    xcb_flush(xcb->connection);
-                    break;
-                case XCB_DESTROY_NOTIFY:
-                    loop = 0;    
-                    break;
-                default: 
-                    /* Unknown event type, ignore it */
-                    break;
-            }
-        }
-        free(event);
-
     }
 
     xcb_disconnect (xcb->connection);
@@ -176,9 +156,8 @@ void xcb_init () {
     /*Create the window*/
     xcb->window = xcb_generate_id (xcb->connection);
 
-    mask = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
+    mask = XCB_CW_BACK_PIXEL ;
     values[0] = xcb->screen->black_pixel;
-    values[1] = XCB_EVENT_MASK_EXPOSURE ;
     xcb_create_window (xcb->connection,                    /* Connection          */
             XCB_COPY_FROM_PARENT,          /* depth (same as root) */
             xcb->window,                        /* window Id           */
@@ -214,10 +193,10 @@ int get_x_progress (struct tm *timeinfo) {
             x = (int)(((double)timeinfo->tm_sec/60)*xcb->screen->width_in_pixels);
             break;
         case MIN:
-            x = (int)(((double)timeinfo->tm_min/60)*xcb->screen->width_in_pixels);
+            x = (int)(((double)timeinfo->tm_min/60+(double)timeinfo->tm_sec/3600)*xcb->screen->width_in_pixels);
             break;
         case HOUR:
-            x = (int)(((double)timeinfo->tm_hour/24)*xcb->screen->width_in_pixels);
+            x = (int)(((double)timeinfo->tm_hour/24+(double)timeinfo->tm_min/1440)*xcb->screen->width_in_pixels);
             break;
     }
     return x;

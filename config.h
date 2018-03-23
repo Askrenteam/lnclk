@@ -38,6 +38,7 @@ typedef struct configuration {
     color foreground;
     color background;
     time_unit unit;
+    char *config_file;
 } configuration;
 
 extern configuration config ;
@@ -51,11 +52,9 @@ color hex_to_color (char *hex);
 //Strip spaces, tabs, and newlines from a string
 char* strip_whitespaces(char *in);
 
+//Parse command-line options
+void get_opts (int argc, char **argv);
 
-
-//TODO : better syntax for config file (maybe getline instead of scanf)
-//TODO : continuous progression
 //TODO : alpha channel ?
-//TODO : getopts to specify config file
 
 #endif
